@@ -51,3 +51,34 @@ document.querySelectorAll('.slider').forEach(sl => {
   sl.addEventListener('keydown', e => { if (e.key === 'ArrowRight') go(i + 1, true); if (e.key === 'ArrowLeft') go(i - 1, true); });
   go(0); restart();
 });
+
+// Scroll reveal: boxes glide in as you scroll
+(function () {
+  if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const groups = [
+    ['.hero-text', 'from-left'], ['.hero-image', 'from-right'],
+    ['.director-intro', ''], ['.sec-title', ''], ['.features .feature', ''],
+    ['.school-moments h2', ''], ['.school-moments .grid > div', 'zoom'],
+    ['.about-page .intro', ''], ['.about-page .staff-card', ''],
+    ['#gallery > h1', ''], ['#gallery > .sec-sub', ''], ['#gallery > .slider', 'zoom'],
+    ['.more-moments', ''], ['.gallery-grid .picture-card', ''],
+    ['.contact-info-card', 'from-left'], ['.Addmm', 'from-right'], ['#contact .cta-inner', 'zoom']
+  ];
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if (!en.isIntersecting) return;
+      const el = en.target;
+      el.classList.add('in'); io.unobserve(el);
+      const d = parseFloat(el.style.getPropertyValue('--d')) || 0;
+      // clean up afterwards so normal hover effects work again
+      setTimeout(() => { el.classList.remove('reveal', 'in', 'from-left', 'from-right', 'zoom'); el.style.removeProperty('--d'); }, (d + 1.1) * 1000);
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+  groups.forEach(([sel, dir]) => {
+    document.querySelectorAll(sel).forEach((el, i) => {
+      el.classList.add('reveal'); if (dir) el.classList.add(dir);
+      el.style.setProperty('--d', ((i % 3) * 0.12).toFixed(2) + 's');
+      io.observe(el);
+    });
+  });
+})();
