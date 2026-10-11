@@ -53,3 +53,14 @@ document.querySelectorAll('.slider').forEach(sl => {
   sl.addEventListener('keydown', e => { if (e.key === 'ArrowRight') go(i + 1, true); if (e.key === 'ArrowLeft') go(i - 1, true); });
   go(0); restart();
 });
+
+// Scroll reveal: boxes fade/slide in when they enter the screen (works scrolling down and up)
+(function () {
+  if (!('IntersectionObserver' in window)) return;
+  const items = document.querySelectorAll('.hero-text, .hero-image, .director-intro, .sec-title, .feature, .school-moments .grid > div, .staff-card, .more-moments, .picture-card, .contact-info-card, .Addmm, .cta-inner');
+  document.documentElement.classList.add('js-reveal');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => e.target.classList.toggle('in', e.isIntersecting));
+  }, { threshold: 0.12 });
+  items.forEach((el, k) => { el.classList.add('reveal'); el.style.transitionDelay = (k % 3) * 80 + 'ms'; io.observe(el); });
+})();
